@@ -6,6 +6,8 @@ const OPERATORS = ["+","-","*","/"];
 const POWER = "POWER(";
 const FACTORIAL = "FACTORIAL";
 
+
+//ADDING SOME BUTTONS FOR SCIENTIFIC CALCULATOR
 let calculator_buttons = [
     {
         name : "rad",
@@ -243,14 +245,16 @@ let calculator_buttons = [
     }
 ];
 
+
 let data = {
     operation : [],
     result : []
 }
 
+//ADDING BUTTONS ON CALCULATOR 
 function buttoncreator() {
     let rowbtns = 0;
-    const calc_btn_row = 4;
+    const calc_btn_row = 8;
     calculator_buttons.forEach((button,index)=>{
         if ( rowbtns % calc_btn_row === 0 ){
             input_element.innerHTML += `<div class = "row"></div>`
@@ -263,6 +267,7 @@ function buttoncreator() {
 }
 buttoncreator();
 
+//FUNCTION FOR RAD AND DEG
 let RADIAN = true;
 
 const rad_btn = document.getElementById("rad");
@@ -275,6 +280,7 @@ function angleToggler(){
     deg_btn.classList.toggle("active_angle");
 }
 
+// TO KNOW USER CLICK ON BUTTONS
 input_element.addEventListener("click",event => {
     const target_buttons = event.target;
 
@@ -283,6 +289,7 @@ input_element.addEventListener("click",event => {
     });
 });
 
+//ADDING OPERATION FROM CLICK
 function calculator(button){
     if(button.type == "operator"){
         data.operation.push(button.symbol);
@@ -361,6 +368,7 @@ function calculator(button){
             result_tot = result_tot.replace(ele.toReplace, ele.replacement);
         })
        
+       //CHECKING SYNTAX-ERROR
        try {
            final_result = eval(result_tot);
        } catch (error) {
@@ -372,6 +380,7 @@ function calculator(button){
        }
 
        final_result = calculate(final_result);
+       ans = final_result;
        data.operation.push(final_result);
        data.result.push(final_result);
        output_result_element.innerHTML = final_result;
@@ -384,7 +393,7 @@ function updateOutputOperation(operation){
     output_operation_element.innerHTML = operation;
 }
 
-
+//TO FIND NUMBERS OF FACTORIAL AND POWER FROM INPUT
 function searcher(array,keyword){
     let arr_search = [];
     array.forEach((ele,index) => {
@@ -392,6 +401,7 @@ function searcher(array,keyword){
     });
     return arr_search;
 }
+//SEARCHING POWER-BASE
 function power_base_search (form_arr,pindex) {
     let pbase = [];
 
@@ -419,6 +429,8 @@ function power_base_search (form_arr,pindex) {
     })
     return pbase;
 }
+
+//SEARCHING FACTORIAL-BASE
 function fact_base_search (fact_arr,findex) {
     let fbase = [];
     let fsequence = 0;
@@ -468,9 +480,16 @@ function fact_base_search (fact_arr,findex) {
     })
     return fbase;
 }
-function factorial (facto_num){
 
-    if (facto_num === 0 || facto_num === 1){
+//SEARCHING FACTORIAL VALUE
+function factorial (facto_num){
+    let facto_result = 1;
+    //SEARCHING FACTORIAL VALUE FOR FLOAT NUMBERS
+    if (facto_num % 1 != 0){
+        return gamma(facto_num+1);
+
+    }    
+    else if (facto_num === 0 || facto_num === 1){
         return facto_result;
     }
     for (let i =1; i<= facto_num;i++){
@@ -482,7 +501,7 @@ function factorial (facto_num){
 }
 
 
-
+// PREFIXING MAXIMUM OUTPUT LENGTH
 const max_output_length = 10;
 const precision_length = 5;
 
@@ -493,6 +512,7 @@ function float_num(num){
     return num % 1 != 0;
 }
 
+// CHECKING THE ANSWER IS EXCEED THAN THE MAX-O/P-LENGTH
 function calculate(results){
     let result_num =  count_num(results);
     if(result_num > max_output_length) {
@@ -518,6 +538,7 @@ function calculate(results){
     }
 }
 
+//ADDING TRIGO FUNCTIONS
 function trigo(callback, angle){
     if(!RADIAN){
         angle = angle * Math.PI/180;
@@ -532,5 +553,24 @@ function inv_trigo(callback, value){
     return angle;
 
 
+}
+
+// FUNCTION TO CALCULATE THE FLOAT-FACTORIAL NUMBERS
+function gamma(n) {  // accurate to about 15 decimal places
+    //some magic constants
+    var g = 7, // g represents the precision desired, p is the values of p[i] to plug into Lanczos' formula
+        p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+    if(n < 0.5) {
+        return Math.PI / Math.sin(n * Math.PI) / gamma(1 - n);
+    }
+    else {
+        n--;
+        var x = p[0];
+        for(var i = 1; i < g + 2; i++) {
+            x += p[i] / (n + i);
+        }
+        var t = n + g + 0.5;
+        return Math.sqrt(2 * Math.PI) * Math.pow(t, (n + 0.5)) * Math.exp(-t) * x;
+    }
 }
 
